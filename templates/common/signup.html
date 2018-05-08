@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block extra-head-resources %}
+    <script>
+    function checkpassword(){
+        var username=document.getElementById('username').value;
+        var email=document.getElementById('email').value;
+        var reg=/^(\w-*\.*)+@(\w-?)+(\.\w{2,})+$/;
+        var password=document.getElementById('password').value;
+        var re_password=document.getElementById('re_password').value;
+            if(username.length<4){
+                alert("用户名必须要大于4位！");
+            }
+            else if(!reg.test(email)) {
+                alert("请正确填写邮箱！");
+            }
+            else if(password=="") {
+                alert("请输入密码！");
+            }
+            else if(password.length<6) {
+                alert("密码请大于6位以上！");
+            }
+            else if(re_password=="") {
+                alert("请重复输入密码！");
+            }
+            else if(password!==re_password) {
+                alert("两次密码输入不一致！");
+            }
+            else{
+                var password_md5=$.md5(password);
+                var re_password_md5=$.md5(password);
+                $.ajax({
+                    type: "POST",
+                    url: "/signup/",
+                    data: {'username':username,'email':email,'password':password_md5,'re_password':re_password_md5,'csrfmiddlewaretoken': '{{ csrf_token }}'},
+                    dataType: 'json',
+                    success:function(data){
+                        console.log(data);
+                        if(data.code=='1200'){
+                            console.log(data.code);
+                            window.location.href='/';
+                        } else {
+                            console.log(data.code);
+                            alert(data.message)
+                        }
+                    }
+                });
+            }
+        }
+
+    </script>
+
+{% endblock %}
+{% block body %}
+    <div style="position:absolute;top: 50%;left: 50%;width: 600px;height: 478px;margin-left:-300px;margin-top:-239px;background: #e7e7e7">
+        <div style="width: 600px;height: 408px">
+            <div style="float:left;width: 314px;height:408px;padding-left:50px;">
+                <form class="form-horizontal" method="post" style="padding-bottom: 30px">
+                    <h3 style="size: 16px;width:270px;text-align:center">欢迎注册</h3>
+                    <input style="width:236px;height:32px;border:1px solid #dddddd;line-height:32px;padding-left:32px;color:#b1a9a9;margin-bottom: 10px;" id="username" name="username" type="text" placeholder="用户名" onkeyup="this.value=this.value.replace(/\s+/g,'')"><br>
+                    <input style="width:236px;height:32px;border:1px solid #dddddd;line-height:32px;padding-left:32px;color:#b1a9a9;margin-bottom: 10px;" id="email" name="email" type="email" placeholder="邮箱"><br>
+                    <input style="width:236px;height:32px;border:1px solid #dddddd;line-height:32px;padding-left:32px;color:#b1a9a9;margin-bottom: 10px;" id="password" name="password" type="password" placeholder="密码"><br>
+                    <input style="width:236px;height:32px;border:1px solid #dddddd;line-height:32px;padding-left:32px;color:#b1a9a9;margin-bottom: 10px;" id="re_password" name="re_password" type="password" placeholder="重复密码"><br>
+                    <input style="width:236px;height:32px;border:1px solid #dddddd;line-height:32px;padding-left:32px;color:#b1a9a9;margin-bottom: 10px;" id="validation" name="validation" type="text" placeholder="验证码"><br>
+                    <input style="width:236px;height:33px;background:#37b5f9;font-size:14px;line-height:33px;text-align:center;border:0;color:#ffffff;border-radius:3px;cursor:pointer" type="button" onclick="checkpassword();" value="注册">
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

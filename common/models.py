@@ -24,4 +24,11 @@ class about_us(models.Model):
     def __str__(self):
         return self.name
 
-
+class user(models.Model):
+    username = models.CharField(max_length=50)
+    email = models.CharField(max_length=50,unique=True)
+    password = models.CharField(max_length=100)
+    user_status = models.IntegerField(choices=[(0,'验证通过'),(1,'暂未验证')],default=1)
+    activation_code = models.CharField(max_length=150)
+    def __str__(self):
+        return self.username
